@@ -1,7 +1,12 @@
-navigator.getUserMedia ||=
-  navigator.webkitGetUserMedia ||
-  navigator.mozGetUserMedia ||
-  navigator.msGetUserMedia
+if navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+  navigator.getUserMedia = (constraints, success, failure) ->
+    promise = navigator.mediaDevices.getUserMedia constraints
+    promise.then(success).catch(failure)
+else
+  navigator.getUserMedia ||=
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia
 
 window.AudioContext ||=
   window.webkitAudioContext
@@ -88,7 +93,10 @@ if navigator.getUserMedia
           that._remove_message()
 
           if window.URL
-            that.video.src = URL.createObjectURL stream
+            try 
+              that.video.srcObject = stream
+            catch
+              that.video.src = URL.createObjectURL stream
           else
             that.video.src = stream
 
