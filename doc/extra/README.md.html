@@ -34,7 +34,7 @@
         </p>
       </nav>
       <div id='filecontents'>
-        <h2 id="about">About</h2><p>JpegCamera is a JavaScript library that allows you to display a camera stream on
+        <h1 id="project-status">Project Status</h1><p>This project is no longer actively maintained. The main selling point of this library was that it worked with either Flash or HTML5 – it abstracted both technologies behind a simple API. In 2018 Flash is irrelevant and the simple API of this library is a limiting factor of what one can do with a camera in HTML5.</p><p>Thanks to everyone for the interest over the years.</p><h2 id="about">About</h2><p>JpegCamera is a JavaScript library that allows you to display a camera stream on
 a web page and then capture, show and upload JPEG snapshots to the server. It
 uses HTML5 in Chrome, Firefox and Opera and falls back to Flash in less capable
 browsers. The video stream is placed without any UI in a container of your
@@ -71,16 +71,13 @@ of loading full library that includes HTML5 implementation with Flash fallback
 or HTML5 version only.</p><h3 id="standalone-app">Standalone app</h3><p>Copy all the files from <code>dist</code> into <code>jpeg_camera</code> directory under your server&#39;s
 root.</p><p>Load JpegCamera and it&#39;s dependencies in the <code>HEAD</code> section of your page.</p><pre><code>&lt;script src=&quot;/jpeg_camera/swfobject.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 &lt;script src=&quot;/jpeg_camera/canvas-to-blob.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;/jpeg_camera/jpeg_camera.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-</code></pre><p>SWFObject and Canvas-to-Blob are stored in separate files so that you don&#39;t have
+&lt;script src=&quot;/jpeg_camera/jpeg_camera.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre><p>SWFObject and Canvas-to-Blob are stored in separate files so that you don&#39;t have
 to load them again if you already use them in your project. If you want to cut
-down on HTTP requests then there is a concatenated version you can use.</p><pre><code>&lt;script src=&quot;/jpeg_camera/jpeg_camera_with_dependencies.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-</code></pre><p>If you want to use HTML5-only version you can load
+down on HTTP requests then there is a concatenated version you can use.</p><pre><code>&lt;script src=&quot;/jpeg_camera/jpeg_camera_with_dependencies.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre><p>If you want to use HTML5-only version you can load
 <code>jpeg_camera_no_flash.min.js</code>. There is no &quot;with dependencies&quot; version of this
 file, so you have to remember to also load Canvas-to-Blob. You don&#39;t need
 SWFObject for HTML5.</p><h3 id="ruby-on-rails-apps">Ruby on Rails apps</h3><p>If you use Ruby on Rails version 3.1 (or higher) then you can use a gem and
-take advantage of the assets pipeline.</p><pre><code>gem &quot;jpeg_camera&quot;, &quot;~&gt; 1.3.2&quot;
-</code></pre><p>Create a file <code>jpeg_camera.js.coffee.erb</code> somewhere in the
+take advantage of the assets pipeline.</p><pre><code>gem &quot;jpeg_camera&quot;, &quot;~&gt; 1.3.2&quot;</code></pre><p>Create a file <code>jpeg_camera.js.coffee.erb</code> somewhere in the
 <code>app/assets/javascripts</code> tree.</p><pre><code>#= require jpeg_camera/swfobject
 #= require jpeg_camera/canvas-to-blob
 #= require jpeg_camera/jpeg_camera
@@ -94,12 +91,11 @@ $ -&gt;
     JpegCamera.DefaultOptions.shutter_ogg_url =
       &quot;&lt;%= asset_path &quot;jpeg_camera/shutter.ogg&quot; %&gt;&quot;
     JpegCamera.DefaultOptions.csrf_token =
-      $(&quot;meta[name=\&quot;csrf-token\&quot;]&quot;).attr(&quot;content&quot;)
-</code></pre><p>SWFObject and Canvas-to-Blob are stored in separate files so that you don&#39;t have
+      $(&quot;meta[name=\&quot;csrf-token\&quot;]&quot;).attr(&quot;content&quot;)</code></pre><p>SWFObject and Canvas-to-Blob are stored in separate files so that you don&#39;t have
 to load them again if you already use them in your project. The assets pipeline
 will take care of minifying and concatenating everything into one script.</p><p>If you want to use HTML5-only version then change the <code>jpeg_camera</code> require
-directive into this one:</p><pre><code>#= require jpeg_camera/jpeg_camera_no_flash
-</code></pre><h2 id="usage">Usage</h2>
+directive into this one:</p><pre><code>#= require jpeg_camera/jpeg_camera_no_flash</code></pre>
+<h2 id="usage">Usage</h2>
 <pre><code>var camera = new JpegCamera(&quot;#camera&quot;);
 
 var snapshot = camera.capture();
@@ -111,8 +107,7 @@ snapshot.upload({api_url: &quot;/upload_image&quot;}).done(function(response) {
   this.discard(); // discard snapshot and show video stream again
 }).fail(function(status_code, error_message, response) {
   alert(&quot;Upload failed with status &quot; + status_code);
-});
-</code></pre><p>A detailed documentation using in-code comments is maintained for
+});</code></pre><p>A detailed documentation using in-code comments is maintained for
 <a href="https://amw.github.io/jpeg_camera/doc/class/JpegCamera.html">JpegCamera</a> and
 <a href="https://amw.github.io/jpeg_camera/doc/class/Snapshot.html">Snapshot</a>
 classes.</p><h2 id="user-privacy">User privacy</h2><p>Respect your users privacy. Make sure they understand why you want to capture
@@ -136,8 +131,7 @@ grunt dist               # build js &amp; swf files
 grunt js                 # only builds js files
 grunt swf                # only builds swf file
 grunt doc                # update documentation
-grunt                    # build dist files and update documentation
-</code></pre><p>To build swf file you need to have <code>mxmlc</code> available in your <code>$PATH</code>. It comes
+grunt                    # build dist files and update documentation</code></pre><p>To build swf file you need to have <code>mxmlc</code> available in your <code>$PATH</code>. It comes
 in the <a href="http://www.adobe.com/devnet/flex/flex-sdk-download.html">Flex SDK</a>.</p><h2 id="acknowledgements">Acknowledgements</h2><p>Thanks to Joseph Huckaby for creating and Matt Clements for maintaining
 Flash-based <a href="http://code.google.com/p/jpegcam/">JpegCam library</a> which I have
 been using until HTML5 became a viable solution. If you&#39;re interested here&#39;s
@@ -147,7 +141,7 @@ that project.</p><p>Copyright <a href="http://adamwrobel.com">Adam Wróbel</a>, 
       </div>
     </div>
     <div id='footer'>
-  June 06, 17 22:09:31 by
+  May 22, 20 09:27:51 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>

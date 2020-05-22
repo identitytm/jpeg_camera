@@ -1,4 +1,4 @@
-/*! JpegCamera 1.3.3 | 2016-09-18
+/*! JpegCamera 1.3.3 | 2020-05-22
     (c) 2013 Adam Wrobel
     https://amw.github.io/jpeg_camera */
 (function() {
@@ -236,7 +236,15 @@
 
   })();
 
-  navigator.getUserMedia || (navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.getUserMedia = function(constraints, success, failure) {
+      var promise;
+      promise = navigator.mediaDevices.getUserMedia(constraints);
+      return promise.then(success)["catch"](failure);
+    };
+  } else {
+    navigator.getUserMedia || (navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+  }
 
   window.AudioContext || (window.AudioContext = window.webkitAudioContext);
 
@@ -321,7 +329,11 @@
         success = function(stream) {
           that._remove_message();
           if (window.URL) {
-            that.video.src = URL.createObjectURL(stream);
+            try {
+              that.video.srcObject = stream;
+            } catch (_error) {
+              that.video.src = URL.createObjectURL(stream);
+            }
           } else {
             that.video.src = stream;
           }
