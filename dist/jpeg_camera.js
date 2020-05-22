@@ -291,7 +291,7 @@
         this.message.style.paddingRight = "" + horizontal_padding + "px";
         this.message.style.position = "absolute";
         this.message.style.zIndex = 3;
-        this.message.innerHTML = "Please allow camera access when prompted by the browser.<br><br>" + "Look for camera icon around your address bar.";
+        this.message.innerHTML = $.i18n("PleaseAgreeCameraAccess");
         this.container.appendChild(this.message);
         this.video_container = document.createElement("div");
         this.video_container.style.width = "" + this.view_width + "px";
@@ -342,7 +342,7 @@
         };
         failure = function(error) {
           var code, key, value;
-          that.message.innerHTML = "<span style=\"color: red;\">" + "You have denied camera access." + "</span><br><br>" + "Look for camera icon around your address bar to change your " + "decision.";
+          that.message.innerHTML = "<span style=\"color: red;\">" + $.i18n("CameraAccessDenied") + "</span><br><br>" + $.i18n("ClickCameraIconToAllowIt");
           code = error.code;
           for (key in error) {
             value = error[key];

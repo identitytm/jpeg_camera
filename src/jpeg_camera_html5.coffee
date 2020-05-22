@@ -53,9 +53,7 @@ if navigator.getUserMedia
       @message.style.paddingRight = "#{horizontal_padding}px"
       @message.style.position = "absolute"
       @message.style.zIndex = 3
-      @message.innerHTML =
-        "Please allow camera access when prompted by the browser.<br><br>" +
-        "Look for camera icon around your address bar."
+      @message.innerHTML = $.i18n "PleaseAgreeCameraAccess"
 
       @container.appendChild @message
 
@@ -111,10 +109,9 @@ if navigator.getUserMedia
         (error) ->
           that.message.innerHTML =
             "<span style=\"color: red;\">" +
-              "You have denied camera access." +
+              $.i18n("CameraAccessDenied") +
             "</span><br><br>" +
-            "Look for camera icon around your address bar to change your " +
-            "decision."
+            $.i18n("ClickCameraIconToAllowIt")
 
           code = error.code
           for key, value of error
