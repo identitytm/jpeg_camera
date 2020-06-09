@@ -28,6 +28,7 @@ class JpegCamera
     timeout: 0
     retry_success: false
     scale: 1.0
+    front: true
 
   # @nodoc
   # @private
@@ -464,3 +465,9 @@ class JpegCamera
     element.style["Moz" + uppercase_style] = value
     element.style["ms" + uppercase_style] = value
     element.style["O" + uppercase_style] = value
+
+  stop: () ->
+    try
+      @_engine_stop()
+    catch
+      console.log 'Failed to stop camera'

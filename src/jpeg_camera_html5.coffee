@@ -11,6 +11,10 @@ else
 window.AudioContext ||=
   window.webkitAudioContext
 
+window.$ ||= {}
+window.$.i18n ||= () ->
+  return ""
+
 # @private
 check_canvas_to_blob = ->
   canvas = document.createElement "canvas"
@@ -78,6 +82,9 @@ if navigator.getUserMedia
 
       get_user_media_options =
         video:
+          facingMode:
+            ideal:
+              "environment"
           optional: [
             {minWidth: 1280},
             {minWidth: 640},
@@ -89,6 +96,7 @@ if navigator.getUserMedia
       success =
         (stream) ->
           that._remove_message()
+          that.stream = stream
 
           if window.URL
             try 
@@ -107,24 +115,62 @@ if navigator.getUserMedia
         # version this will always evaluate to
         # `that._got_error("PERMISSION_DENIED")`.
         (error) ->
-          that.message.innerHTML =
-            "<span style=\"color: red;\">" +
-              $.i18n("CameraAccessDenied") +
-            "</span><br><br>" +
-            $.i18n("ClickCameraIconToAllowIt")
+          console.log "Failed to activate camera", error
+          if get_user_media_options.video.facingMode
+            delete get_user_media_options.video.facingMode
+            navigator.getUserMedia get_user_media_options, success, failure
+          else if get_user_media_options.video.deviceId
+            delete get_user_media_options.video.deviceId
+            navigator.getUserMedia get_user_media_options, success, failure
+          else 
+            that.message.innerHTML =
+              "<span style=\"color: red;\">" +
+                $.i18n("CameraAccessDenied") +
+              "</span><br><br>" +
+              $.i18n("ClickCameraIconToAllowIt")
 
-          code = error.code
-          for key, value of error
-            continue if key == "code"
-            that._got_error key
-            return
-          that._got_error "UNKNOWN ERROR"
+            code = error.code
+            for key, value of error
+              continue if key == "code"
+              that._got_error key
+              return
+            that._got_error "UNKNOWN ERROR"
 
-      # XXX In an older spec first parameter was a string
-      try
-        navigator.getUserMedia get_user_media_options, success, failure
-      catch error
-        navigator.getUserMedia "video", success, failure
+      activate = () ->
+        # XXX In an older spec first parameter was a string
+        try
+          navigator.getUserMedia get_user_media_options, success, failure
+        catch error
+          navigator.getUserMedia "video", success, failure
+
+      gotDevices = (devs) ->
+        for key, value of devs
+          continue if value.kind != "videoinput"
+          console.log value
+          if value.facingMode == "environment" || value.label.indexOf("facing back") >= 0
+            console.log "Using device: " + value.deviceId
+            get_user_media_options.video.deviceId = value.deviceId
+        if get_user_media_options.video.deviceId
+          delete get_user_media_options.video.facingMode
+          delete get_user_media_options.video.optional
+        that._engine_stop()
+        activate()
+
+      enumDevices = (stream) ->
+        that.stream = stream
+        navigator.mediaDevices.enumerateDevices().then(gotDevices)
+
+      if @options.front
+        @_debug "Using front camera"
+        delete get_user_media_options.video.facingMode
+        activate()
+      else
+        @_debug "Using rear camera"
+        isAndroid = (/Android/i).test(navigator.userAgent);
+        if isAndroid && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && navigator.mediaDevices.enumerateDevices
+          navigator.mediaDevices.getUserMedia({ video: true }).then(enumDevices)
+        else
+          activate()
 
     _engine_play_shutter_sound: ->
       return unless @shutter_buffer
@@ -151,6 +197,21 @@ if navigator.getUserMedia
       snapshot._canvas = canvas
       snapshot._mirror = mirror
       snapshot._quality = quality
+
+    _engine_stop: () -> 
+      if !this.stream 
+        console.log 'Camera stream not started'
+        return
+      try
+        if this.stream['getTracks']
+          tracks = this.stream.getTracks()
+          for i of tracks 
+            tracks[i].stop()
+
+        if this.stream.stop
+          this.stream.stop()
+      catch
+        console.log 'Failed to stop camera stream'
 
     _engine_display: (snapshot) ->
       if @displayed_canvas

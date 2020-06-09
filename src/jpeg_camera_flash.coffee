@@ -77,6 +77,8 @@ if should_try_flash && can_use_flash()
         @view_width, @view_height, '9', null, flashvars, params, attributes,
         callback
 
+    _engine_stop: -> {}
+
     _engine_play_shutter_sound: ->
       @_flash._play_shutter()
 
